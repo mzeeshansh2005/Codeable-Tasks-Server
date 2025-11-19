@@ -6,6 +6,9 @@ const TeamSchema = new Schema({
     required: true,
     unique: true,
   },
+  img: {
+    type: String,
+  },
   description: {
     type: String,
   },

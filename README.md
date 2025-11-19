@@ -37,7 +37,7 @@ A robust backend server for a task management application built with Node.js, Ex
    Create a `.env` file in the root directory:
    ```env
    # Server Configuration
-   PORT=3000
+   PORT=4000
    NODE_ENV=development
 
    # MongoDB Configuration

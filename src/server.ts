@@ -1,10 +1,17 @@
 import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
 import config from './config/config.js';
 import { connectDB } from './lib/mongodb.js';
 const app: Application = express();
 import userRouter from './routes/user.js';
 import forYouRouter from './routes/forYou.js';
-// Middleware
+import projectRouter from './routes/project.js';
+import issueRouter from './routes/issue.js';
+
+app.use(cors({
+  origin: '*', // Allow all origins
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,8 +27,8 @@ app.get('/health', (req: Request, res: Response) => {
 // Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/for-you', forYouRouter);
-// app.use('/api/v1/projects', projectRoutes);
-// app.use('/api/v1/issues', issueRoutes);
+app.use('/api/v1/projects', projectRouter);
+app.use('/api/v1/issues', issueRouter);
 // app.use('/api/v1/comments', commentRoutes);
 // app.use('/api/v1/workflow-statuses', workflowStatusRoutes);
 // app.use('/api/v1/teams', teamRoutes);

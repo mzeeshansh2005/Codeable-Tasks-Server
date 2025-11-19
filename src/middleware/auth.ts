@@ -44,7 +44,6 @@ export const authenticateUser = async (
       });
       return;
     }
-
     // Verify the token with Firebase Admin
     const decodedToken = await auth.verifyIdToken(token);
 
