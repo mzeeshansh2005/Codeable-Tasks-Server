@@ -7,10 +7,13 @@ import userRouter from './routes/user.js';
 import forYouRouter from './routes/forYou.js';
 import projectRouter from './routes/project.js';
 import issueRouter from './routes/issue.js';
+import teamRouter from './routes/team.js';
 
-app.use(cors({
-  origin: '*', // Allow all origins
-}));
+app.use(
+  cors({
+    origin: '*', // Allow all origins
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,9 +32,9 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/for-you', forYouRouter);
 app.use('/api/v1/projects', projectRouter);
 app.use('/api/v1/issues', issueRouter);
+app.use('/api/v1/teams', teamRouter);
 // app.use('/api/v1/comments', commentRoutes);
 // app.use('/api/v1/workflow-statuses', workflowStatusRoutes);
-// app.use('/api/v1/teams', teamRoutes);
 
 // Start server
 const startServer = async () => {

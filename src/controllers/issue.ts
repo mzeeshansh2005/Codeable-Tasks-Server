@@ -205,9 +205,7 @@ export const updateIssue = async (req: Request, res: Response) => {
 export const deleteIssue = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { deleteResourceActivities } = await import(
-      '../utils/trackActivity'
-    );
+    const { deleteResourceActivities } = await import('../utils/trackActivity');
 
     const issue = await Issue.findByIdAndDelete(id);
 
@@ -262,4 +260,3 @@ export const getMyIssues = async (req: Request, res: Response) => {
     });
   }
 };
-

@@ -13,8 +13,8 @@ const router = Router();
 // All routes require authentication
 router.use(authenticateUser);
 
-// GET /api/v1/projects - Get all projects for authenticated user
-router.get('/', getAllProjects);
+// GET /api/v1/projects - Get all projects of a specific user
+router.get('/:uid', getAllProjects);
 
 // GET /api/v1/projects/:id - Get a specific project by ID
 router.get('/:id', getProjectById);
@@ -29,4 +29,3 @@ router.patch('/:id', updateProject);
 router.delete('/:id', deleteProject);
 
 export default router;
-

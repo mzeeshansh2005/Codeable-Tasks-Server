@@ -1,18 +1,21 @@
 import { Request, Response } from 'express';
 import Project from '../models/Project';
+import User from '../models/User';
 import { trackActivity } from '../utils/trackActivity';
 
 /**
- * Get all projects for the authenticated user
+ * Get all projects for the specific user
  */
 export const getAllProjects = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.uid;
+    const { uid } = req.params;
 
-    const projects = await Project.find({ members: userId })
-      .populate('members', 'name email avatar')
-      .sort({ updatedAt: -1 });
-
+    const projects = await Project.find(
+      { members: uid },
+      'id title img description'
+    )
+      .sort({ updatedAt: -1 })
+      .lean();
     res.status(200).json({
       success: true,
       message: 'Projects fetched successfully',
@@ -37,10 +40,7 @@ export const getProjectById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = req.user?.uid;
 
-    const project = await Project.findById(id).populate(
-      'members',
-      'name email avatar'
-    );
+    const project = await Project.findById(id).lean();
 
     if (!project) {
       return res.status(404).json({
@@ -48,6 +48,13 @@ export const getProjectById = async (req: Request, res: Response) => {
         message: 'Project not found',
       });
     }
+
+    // Manually populate members
+    const memberUsers = await User.find(
+      { uid: { $in: project.members } },
+      'uid name email avatar'
+    ).lean();
+    const projectWithMembers = { ...project, members: memberUsers };
 
     // Track that user viewed this project (for recents)
     if (userId) {
@@ -61,7 +68,7 @@ export const getProjectById = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Project fetched successfully',
-      data: project,
+      data: projectWithMembers,
     });
   } catch (error: any) {
     console.error('Error fetching project:', error);
@@ -107,10 +114,13 @@ export const createProject = async (req: Request, res: Response) => {
       });
     }
 
-    const populatedProject = await Project.findById(project._id).populate(
-      'members',
-      'name email avatar'
-    );
+    // Manually populate members
+    const projectData = await Project.findById(project._id).lean();
+    const memberUsers = await User.find(
+      { uid: { $in: projectData?.members || [] } },
+      'uid name email avatar'
+    ).lean();
+    const populatedProject = { ...projectData, members: memberUsers };
 
     res.status(201).json({
       success: true,
@@ -140,7 +150,7 @@ export const updateProject = async (req: Request, res: Response) => {
     const project = await Project.findByIdAndUpdate(id, updates, {
       new: true,
       runValidators: true,
-    }).populate('members', 'name email avatar');
+    }).lean();
 
     if (!project) {
       return res.status(404).json({
@@ -148,6 +158,13 @@ export const updateProject = async (req: Request, res: Response) => {
         message: 'Project not found',
       });
     }
+
+    // Manually populate members
+    const memberUsers = await User.find(
+      { uid: { $in: project.members } },
+      'uid name email avatar'
+    ).lean();
+    const projectWithMembers = { ...project, members: memberUsers };
 
     // Track that user updated this project
     if (userId) {
@@ -161,7 +178,7 @@ export const updateProject = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Project updated successfully',
-      data: project,
+      data: projectWithMembers,
     });
   } catch (error: any) {
     console.error('Error updating project:', error);
@@ -180,9 +197,7 @@ export const updateProject = async (req: Request, res: Response) => {
 export const deleteProject = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { deleteResourceActivities } = await import(
-      '../utils/trackActivity'
-    );
+    const { deleteResourceActivities } = await import('../utils/trackActivity');
 
     const project = await Project.findByIdAndDelete(id);
 
@@ -209,4 +224,3 @@ export const deleteProject = async (req: Request, res: Response) => {
     });
   }
 };
-

@@ -31,10 +31,10 @@ const UserSchema = new Schema(
   }
 );
 UserSchema.virtual('teams', {
-    ref: 'Team', 
-    localField: '_id', 
-    foreignField: 'members', 
-    justOne: false
+  ref: 'Team',
+  localField: '_id',
+  foreignField: 'members',
+  justOne: false,
 });
 const User = mongoose.model('User', UserSchema);
 export default User;

@@ -19,8 +19,7 @@ const ProjectSchema = new Schema(
       type: String,
     },
     members: {
-      type: [Schema.Types.ObjectId],
-      ref: 'User',
+      type: [String],
       required: true,
     },
   },

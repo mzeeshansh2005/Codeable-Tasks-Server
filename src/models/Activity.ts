@@ -34,4 +34,3 @@ ActivitySchema.index({ user: 1, type: 1, updatedAt: -1 });
 
 const Activity = mongoose.model('Activity', ActivitySchema);
 export default Activity;
-

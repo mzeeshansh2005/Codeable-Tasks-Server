@@ -57,4 +57,3 @@ export const deleteResourceActivities = async (
     console.error('Error deleting resource activities:', error);
   }
 };
-

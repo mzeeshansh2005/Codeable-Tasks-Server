@@ -14,7 +14,7 @@ export const uploadImageToStorage = async (
   try {
     // Extract the base64 data and mime type
     const matches = base64Image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    
+
     if (!matches || matches.length !== 3) {
       throw new Error('Invalid base64 image format');
     }
@@ -55,7 +55,9 @@ export const uploadImageToStorage = async (
  * Deletes an image from Firebase Storage by URL
  * @param imageUrl - The public URL of the image to delete
  */
-export const deleteImageFromStorage = async (imageUrl: string): Promise<void> => {
+export const deleteImageFromStorage = async (
+  imageUrl: string
+): Promise<void> => {
   try {
     // Extract the file path from the URL
     const urlPattern = /https:\/\/storage\.googleapis\.com\/[^\/]+\/(.+)/;
@@ -99,4 +101,3 @@ const getFileExtension = (mimeType: string): string => {
 
   return extensions[mimeType] || 'jpg';
 };
-

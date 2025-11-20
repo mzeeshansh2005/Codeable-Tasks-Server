@@ -33,4 +33,3 @@ router.patch('/:id', updateIssue);
 router.delete('/:id', deleteIssue);
 
 export default router;
-

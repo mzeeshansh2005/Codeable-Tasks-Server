@@ -11,16 +11,14 @@ const IssueSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'WorkflowStatus',
       required: true,
-      default: 'workflow_statuses.0',
+      default: 'todo',
     },
     reporter: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: [String],
       required: true,
     },
-    assignee: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+    assignees: {
+      type: [String],
       required: false,
     },
     title: {
@@ -36,9 +34,9 @@ const IssueSchema = new Schema(
       required: true,
     },
     priority: {
-      type: String,
-      enum: ['Highest', 'High', 'Medium', 'Low', 'Lowest'],
-      default: 'Medium',
+      type: [String],
+      enum: ['highest', 'high', 'medium', 'low', 'lowest'],
+      default: ['medium'],
     },
     estimate: {
       type: Number,

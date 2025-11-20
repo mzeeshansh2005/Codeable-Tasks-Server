@@ -7,10 +7,10 @@ export const getForYouRecents = async (req: Request, res: Response) => {
   try {
     const { type } = req.params;
     const { limit } = req.query;
-    const limitNumber = parseInt(limit as string || '5');
+    const limitNumber = parseInt((limit as string) || '5');
     const userId = req.user?.uid;
     let query: any = { user: userId };
-    
+
     // Filter by resource type
     if (type === 'projects') {
       query.type = 'Project';
@@ -34,7 +34,7 @@ export const getForYouRecents = async (req: Request, res: Response) => {
     const recents = await Promise.all(
       activities.map(async (activity) => {
         let resource = null;
-        
+
         if (activity.type === 'Project') {
           resource = await Project.findById(activity.resourceId)
             .populate('title')
@@ -55,7 +55,7 @@ export const getForYouRecents = async (req: Request, res: Response) => {
 
     // Filter out any null resources (in case they were deleted)
     const validRecents = recents.filter((r) => r.title !== null);
-    
+
     res.status(200).json({
       success: true,
       message: 'Recents fetched successfully',

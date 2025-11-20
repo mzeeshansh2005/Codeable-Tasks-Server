@@ -1,19 +1,22 @@
 import User from '../models/User';
 import { Request, Response } from 'express';
-import { uploadImageToStorage, deleteImageFromStorage } from '../utils/uploadImage.js';
+import {
+  uploadImageToStorage,
+  deleteImageFromStorage,
+} from '../utils/uploadImage.js';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { uid, name, email, avatar } = req.body;
     let user = await User.findOne({ uid });
-    
+
     if (user) {
       // Update existing user
       user.name = name;
       user.email = email;
       if (avatar) user.avatar = avatar;
       await user.save();
-      
+
       res.status(200).json({
         success: true,
         message: 'User updated successfully',
@@ -42,7 +45,7 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     const { uid } = req.params;
     const user = await User.findOne({ uid: uid });
-    
+
     if (!user) {
       res.status(404).json({
         success: false,
@@ -50,7 +53,7 @@ export const getUser = async (req: Request, res: Response) => {
       });
       return;
     }
-    
+
     res.status(200).json({
       success: true,
       message: 'User fetched successfully',
@@ -68,10 +71,10 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const uid  = req.user?.uid;
+    const uid = req.user?.uid;
     const { name, bio, avatar } = req.body;
     const user = await User.findOne({ uid });
-    
+
     if (!user) {
       res.status(404).json({
         success: false,
@@ -79,14 +82,13 @@ export const updateUser = async (req: Request, res: Response) => {
       });
       return;
     }
-    
+
     if (name !== undefined) user.name = name;
     if (bio !== undefined) user.bio = bio;
-    
+
     if (avatar !== undefined) {
       if (avatar.startsWith('data:image/')) {
         try {
- 
           if (user.avatar && user.avatar.includes('storage.googleapis.com')) {
             await deleteImageFromStorage(user.avatar);
           }
@@ -98,7 +100,10 @@ export const updateUser = async (req: Request, res: Response) => {
           res.status(500).json({
             success: false,
             message: 'Failed to upload avatar image',
-            error: uploadError instanceof Error ? uploadError.message : 'Unknown error',
+            error:
+              uploadError instanceof Error
+                ? uploadError.message
+                : 'Unknown error',
           });
           return;
         }
@@ -106,9 +111,9 @@ export const updateUser = async (req: Request, res: Response) => {
         user.avatar = avatar;
       }
     }
-    
+
     await user.save();
-    
+
     res.status(200).json({
       success: true,
       message: 'User updated successfully',
@@ -134,9 +139,9 @@ export const updateLastSignIn = async (req: Request, res: Response) => {
       });
       return;
     }
-    
+
     const user = await User.findOne({ uid });
-    
+
     if (!user) {
       res.status(404).json({
         success: false,
@@ -144,11 +149,11 @@ export const updateLastSignIn = async (req: Request, res: Response) => {
       });
       return;
     }
-    
+
     // Update the updatedAt field (Mongoose will do this automatically on save)
     user.updatedAt = new Date();
     await user.save();
-    
+
     res.status(200).json({
       success: true,
       message: 'Last sign-in updated successfully',
